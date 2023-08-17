@@ -145,16 +145,15 @@ abstract class PaymentAbstract
 		return $objPmReq;
 	}
 	
-	static public function factoryFromEncrypted($envKey, $encData, $privateKeyFilePath, $privateKeyPassword = null)
+	static public function factoryFromEncrypted($envKey, $encData, $privateKey, $privateKeyPassword = null)
 	{
-		$privateKey = null;
 		if($privateKeyPassword == null)
 		{
-			$privateKey = @openssl_get_privatekey("file://{$privateKeyFilePath}");
+			$privateKey = @openssl_get_privatekey($privateKey);
 		}
 		else
 		{
-			$privateKey = @openssl_get_privatekey("file://{$privateKeyFilePath}", $privateKeyPassword);
+			$privateKey = @openssl_get_privatekey($privateKey, $privateKeyPassword);
 		}
 		if($privateKey === false)
         {
@@ -303,11 +302,11 @@ abstract class PaymentAbstract
 		}
 	}
 	
-	public function encrypt($x509FilePath)
+	public function encrypt($publicKey)
 	{
 		$this->_prepare();
 		
-		$publicKey = openssl_pkey_get_public("file://{$x509FilePath}");
+		$publicKey = openssl_pkey_get_public($publicKey);
 		if($publicKey === false)
 		{
 			$this->outEncData	= null;
